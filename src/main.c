@@ -15,7 +15,7 @@ enum Method_EDO{
     CRANCK_NICOLSON = 2,
 };
 
-int MAX_ITER = 10000;
+int MAX_ITER = 10;
 
 double heat_source(double x, double y){
     return sin(M_PI*x)*sin(M_PI*y);
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 
     int m = 3;
     int n = 3;
-    int T = 100;
+    int T = 1;
     double eps = 1e-10;
 
     double hx = 1.0/(m+1);
@@ -45,17 +45,26 @@ int main(int argc, char **argv){
     double ht = 1.0/(T+1);
 
     enum Method_Ax_b method_ax_b = JACOBI;
-    enum Method_EDO method_edo = 2;
+    enum Method_EDO method_edo = CRANCK_NICOLSON;
     
     double nu;
     double I;
+    FILE* fptr = NULL;
     if (argc < 3){
         nu = 0.3;
         I = 1.;
+        fptr = stdout;
     }
     else{
         nu = atof(argv[1]);
         I = atof(argv[2]);
+        if (argc > 3){
+            const char * file_name = argv[3];
+            if (access(file_name, F_OK)){
+                remove(file_name);
+            }
+            fptr = fopen(file_name, "a+");
+        }
     }
     
     double nu_tilde = nu/method_edo;
@@ -69,15 +78,9 @@ int main(int argc, char **argv){
     heat_source_vector(f, m, n, 1);
     heat_source_vector(u, m, n, 1);
     
-    FILE* fptr;
-    const char * file_name = "data.txt";
-    if (access(file_name, F_OK)){
-        remove(file_name);
-    }
-    else{
-        fptr = fopen("data.txt", "a+");
-    }
-    fptr = stdout;
+    
+    
+    
     //fptr = fopen("data.txt", "a");
 
     switch (method_ax_b)

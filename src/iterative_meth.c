@@ -62,7 +62,6 @@ void Jacobi(
         tmp_ptr = u;
         u = new_u;
         new_u = tmp_ptr;
-        printf("%f %f\n", diff_squared_sum, el_squared_sum);
     }while (diff_squared_sum>=tol*el_squared_sum && iter<max_iter);//
 }
 
