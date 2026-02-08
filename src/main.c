@@ -15,7 +15,7 @@ enum Method_EDO{
     CRANCK_NICOLSON = 2,
 };
 
-int MAX_ITER = 10;
+int MAX_ITER = 20;
 
 double heat_source(double x, double y){
     return sin(M_PI*x)*sin(M_PI*y);
@@ -35,8 +35,8 @@ void heat_source_vector(double *vect, int m, int n, int init){
  
 int main(int argc, char **argv){
 
-    int m = 3;
-    int n = 3;
+    int m = 100;
+    int n = 100;
     int T = 1;
     double eps = 1e-10;
 
@@ -53,7 +53,6 @@ int main(int argc, char **argv){
     if (argc < 3){
         nu = 0.3;
         I = 1.;
-        fptr = stdout;
     }
     else{
         nu = atof(argv[1]);
@@ -66,7 +65,6 @@ int main(int argc, char **argv){
             fptr = fopen(file_name, "a+");
         }
     }
-    
     double nu_tilde = nu/method_edo;
     double lambda = ht + 2*nu_tilde/hx/hx + 2*nu_tilde/hy/hy; 
     
@@ -99,7 +97,7 @@ int main(int argc, char **argv){
         goto jacobi_case;
         break;
     }
-    fclose(fptr);
+    //fclose(fptr);
     
     f = NULL;
     u = NULL;

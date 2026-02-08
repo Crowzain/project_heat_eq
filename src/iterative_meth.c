@@ -2,21 +2,8 @@
 
 void print_vector(double* u, int m, int n, FILE* f_ptr){
     int np2 = n+2;
-    if (f_ptr==stdout){
-        for (int i=0; i<m+2; i++){
-            for (int j=0; j<np2; j++){
-                fprintf(f_ptr, "%1.9e,\t", u[i*np2+j]);
-            }
-            fprintf(f_ptr, "\n");
-        }
-    }
-    else{
-        int size = (m+2)*np2;
-        for (int i=0; i<size; i++){
-            fprintf(f_ptr, "%4.6f, ", u[i]);
-        }
-    }
-    fprintf(f_ptr, "\n");
+    int size = (m+2)*np2;
+    fwrite(u, sizeof(double), size, f_ptr?f_ptr:stdout);
 }
 
 void Jacobi(
