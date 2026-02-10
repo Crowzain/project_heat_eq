@@ -2,6 +2,7 @@ import numpy as np
 import subprocess
 import matplotlib.pyplot as plt
 import scipy.linalg as alg
+import scipy.sparse as sp
 import sklearn.gaussian_process as gp
 
 # parameters
@@ -22,10 +23,10 @@ SIZE = N_x*N_y
 # domain definition
 
 nu_values = {0.01, 0.03, 0.06, 0.07}
-I_values = {1, 5, 20, 50} 
+I_values = {1, 5, 20, 50}
 
 
-A = np.empty((N_x*N_y, T*len(nu_values)*len(I_values)))
+A = np.zeros((N_x*N_y, T*len(nu_values)*len(I_values)))
 
 def generate_data()->None:
     """
@@ -46,7 +47,7 @@ def import_data(A:np.ndarray, from_stdout:bool=True)->None:
         for i, nu_iter in enumerate(nu_values):
             for j, I_iter in enumerate(I_values):
                 output = subprocess.run(["./main", str(nu_iter), str(I_iter)], capture_output=True)
-                stride = i*len(I_values)*T+j
+                stride = i*len(I_values)*T+j*T
                 for t in range(T):
                     A[:, stride+t: stride+t+1] = np.frombuffer(output.stdout)[t*SIZE: (t+1)*SIZE].reshape(SIZE, 1)
 
@@ -54,7 +55,7 @@ def import_data(A:np.ndarray, from_stdout:bool=True)->None:
     else:
         for i, nu_iter in enumerate(nu_values):
             for j, I_iter in enumerate(I_values):
-                stride = i*j+j
+                stride = i*len(I_values)*T+j*T
                 with open(f"data/data_nu{nu_iter}_I{I_iter}.bin", "br") as f:
                     for t in range(T):
                         A[:, stride*t:stride*(t+1)] += np.frombuffer(f.read(SIZE*DOUBLE_C_SIZE)).reshape(SIZE, 1)
@@ -72,10 +73,12 @@ def get_reduced_A(
     S = np.zeros((U.shape[0], V.shape[0]))
     variance_percentage = np.cumsum(s)/np.sum(s)
     i = 0
-    while i < len(variance_percentage) and variance_percentage[i]<threshold:
-        S[i,i] = s[i]
-        i+=1    
-    
+    while i < len(variance_percentage):
+        S[i,i] += s[i]
+        if variance_percentage[i]<threshold:
+            break
+        i+=1
+    S = sp.csr_matrix(S)
     if return_U_S_V:
         return U, S, V
     Ak = U@S@V
@@ -83,8 +86,12 @@ def get_reduced_A(
 
 if __name__ == "__main__":
     #generate_data()
-    import_data(A, False)
+    import_data(A, True)
     Ak = get_reduced_A(A)
+    #plt.imshow(Ak)
+    #plt.colorbar()
+    #plt.show()
+    
     print("A_shape", A.shape)
     print("Ak_shape", Ak.shape)
     #rbf = gp.RBF()
