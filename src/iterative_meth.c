@@ -1,13 +1,13 @@
 #include "iterative_meth.h"
 
-void print_vector(double* u, int m, int n, FILE* f_ptr){
+inline void print_vector(double* u, int m, int n, FILE* f_ptr){
     int np2 = n+2;
     int size = (m+2)*np2;
     fwrite(u, sizeof(double), size, f_ptr?f_ptr:stdout);
 }
 
 void Jacobi(
-    double *u, double *new_u, double I, double *f, int m, 
+    double *restrict u, double *restrict new_u, double I, double *restrict f, int m, 
     int n, double hx, double hy, double nu_tilde, 
     double lambda, int max_iter, double tol, FILE* fptr
 ){
@@ -55,7 +55,7 @@ void Jacobi(
 
 
 void GaussSeidel(
-    double *u, double I, double *f, int m, int n,
+    double *restrict u, double I, double *restrict f, int m, int n,
     double hx, double hy, double nu_tilde, double lambda,
     int max_iter, double tol, FILE* fptr
 ){

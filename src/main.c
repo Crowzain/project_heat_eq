@@ -17,11 +17,11 @@ enum Method_EDO{
 
 int MAX_ITER = 20;
 
-double heat_source(double x, double y){
+static inline double heat_source(double x, double y){
     return sin(M_PI*x)*sin(M_PI*y);
 }
 
-void heat_source_vector(double *vect, int m, int n, int init){
+void heat_source_vector(double *restrict vect, int m, int n, int init){
     int offset = (init) ? 0 : 1;
     for (int i=offset; i<m+1+offset; i++){
         for (int j=offset; j<n+1+offset; j++){
