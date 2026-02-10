@@ -62,38 +62,33 @@ def import_data(A:np.ndarray, from_stdout:bool=True)->None:
 
 
 def get_reduced_A(
-    A:np.ndarray, threshold:float=0.99, return_U_S_V:bool=False
+    A:np.ndarray, threshold:float=0.99, return_Uk_Sk_Vk:bool=False
     )->np.ndarray|tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-        ```get_reduced_A``` returns either the reduced form of A with ```threshold```% of variance or the correponding
-        decomposition (U,S,D) triplet using the SVD decomposition 
+        ```get_reduced_A``` returns either the reduced form Ak of A with ```threshold```% of variance or the correponding
+        reduced decomposition (Uk, Sk, Dk) triplet using the SVD decomposition 
     """
 
     U, s, V= alg.svd(A)
-    S = np.zeros((U.shape[0], V.shape[0]))
     variance_percentage = np.cumsum(s)/np.sum(s)
     i = 0
-    while i < len(variance_percentage):
-        S[i,i] += s[i]
-        if variance_percentage[i]<threshold:
-            break
+    while i < len(variance_percentage) and variance_percentage[i]<threshold:
         i+=1
-    S = sp.csr_matrix(S)
-    if return_U_S_V:
-        return U, S, V
+    S = sp.diags_array(s[:i+1])
+    if return_Uk_Sk_Vk:
+        return U[:,:i+1], S, V[:i+1,:]
     Ak = U@S@V
     return Ak
 
 if __name__ == "__main__":
     #generate_data()
     import_data(A, True)
-    Ak = get_reduced_A(A)
-    #plt.imshow(Ak)
-    #plt.colorbar()
-    #plt.show()
-    
+    U, S, V = get_reduced_A(A, return_Uk_Sk_Vk=True)
+
+    Uk = U@S
+
     print("A_shape", A.shape)
-    print("Ak_shape", Ak.shape)
+    #print("Ak_shape", Ak.shape)
     #rbf = gp.RBF()
     #gp = gp.GaussianProcessRegressor(rbf, random_state=RANDOM_STATE)
 
