@@ -1,6 +1,8 @@
 # Compilateur et options
 CC      = gcc
-CFLAGS  = -Wall -Wextra -g
+CFLAGS  = -Wall -Wextra
+DFLAG   = -pg
+OMPFLAG = -fopenmp
 TARGET  = ./main
 
 # Chemins
@@ -20,7 +22,7 @@ $(TARGET): $(OBJ)
 # Règle pour les fichiers objets
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c -O3 $< -o $@
 
 # Nettoyage
 clean:
@@ -33,6 +35,10 @@ fclean: clean
 # Recompilation complète
 re: fclean all
 
-omp: all -fopenmp
+omp: CFLAGS += $(OMPFLAG)
+omp: all
+
+debug: CFLAGS += $(DFLAG) 
+debug: all 
 
 .PHONY: all clean fclean re

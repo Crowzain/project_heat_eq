@@ -1,8 +1,7 @@
 #include "iterative_meth.h"
 
 inline void print_vector(double* u, int m, int n, FILE* f_ptr){
-    int np2 = n+2;
-    int size = (m+2)*np2;
+    int size = (m+2)*(n+2);
     fwrite(u, sizeof(double), size, f_ptr?f_ptr:stdout);
 }
 
@@ -22,10 +21,10 @@ void Jacobi(
         iter++;
         el_squared_sum = 0.0;
         diff_squared_sum = 0.0;
-        #pragma omp parallel
-        #pragma omp for
+        //#pragma omp parallel
+        //#pragma omp for
         for (int i=1; i<m+1; i++){
-            #pragma omp for
+            //#pragma omp for reduction(+:el_squared_sum)
             for (int j=1; j<n+1; j++){
                 
                 tmp_val = 

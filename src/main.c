@@ -47,21 +47,30 @@ int main(int argc, char **argv){
     enum Method_Ax_b method_ax_b = JACOBI;
     enum Method_EDO method_edo = CRANCK_NICOLSON;
     
-    double nu;
-    double I;
+    double nu; // thermal diffusivity parameter
+    double I; // heat source coefficient
+    
     FILE* fptr = NULL;
+    int FLAG_FILE = 0; // flag to check whether a file is opened
+    
+    // if parameters are not provided, use default parameters
     if (argc < 3){
         nu = 0.3;
         I = 1.;
     }
     else{
+
         nu = atof(argv[1]);
         I = atof(argv[2]);
+
+        // if a path is provided, delete the file if already does exist and
+        // then create and write on it
         if (argc > 3){
             const char * file_name = argv[3];
             if (access(file_name, F_OK)){
                 remove(file_name);
             }
+            FLAG_FILE = 1;
             fptr = fopen(file_name, "a+");
         }
     }
@@ -75,11 +84,6 @@ int main(int argc, char **argv){
     // Initialize heat source vector
     heat_source_vector(f, m, n, 1);
     heat_source_vector(u, m, n, 1);
-    
-    
-    
-    
-    //fptr = fopen("data.txt", "a");
 
     switch (method_ax_b)
     {
@@ -97,8 +101,11 @@ int main(int argc, char **argv){
         goto jacobi_case;
         break;
     }
-    //fclose(fptr);
+
+    // close the file if one has been opened
+    if (FLAG_FILE) fclose(fptr);
     
+    // reset and free vectors 
     f = NULL;
     u = NULL;
 
