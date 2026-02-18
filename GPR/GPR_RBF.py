@@ -3,13 +3,11 @@ import numpy as np
 import scipy.linalg as linalg
 
 
-class GPR:
-    def __init__(self, kernel:gp.kernels.Kernel|None=None, theta:int|np.ndarray=1):
+class GPR_RBF:
+    def __init__(self, theta:int|np.ndarray=1):
         self.theta = theta
-        if kernel is None:
-            self.kernel = gp.kernels.RBF(self.theta)
-        else:
-            self.kernel = kernel
+        self.kernel = gp.kernels.RBF(self.theta)
+
 
     def fit(
             self,
@@ -24,13 +22,11 @@ class GPR:
         self.K = np.eye(n_rows)*sigma+self.kernel(self.X_obs, self.X_obs)
         c, low = linalg.cho_factor(self.K)
 
-        print(self.kernel.theta)
-
         # matrix product K^{-1} by y
         self.invK_y = linalg.cho_solve((c, low), y)
 
 
-    def predict_new_ak(
+    def predict(
             self,
             x:np.ndarray,
             return_cov:bool=False
@@ -44,7 +40,7 @@ class GPR:
         return mean
     
     def score(self, X_input:np.ndarray, y:np.ndarray)->dict[str, float]:
-        prediction = self.predict_new_ak(X_input)
+        prediction = self.predict(X_input)
         y_len = len(y)
 
         return {

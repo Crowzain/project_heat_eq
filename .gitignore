@@ -1,6 +1,8 @@
-/data
+*.bin
+*/data/
 *__pycache__
 main
 .DS_Store
 *.json
-/obj
+*/obj
+*.ipynb

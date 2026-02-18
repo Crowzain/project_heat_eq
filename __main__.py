@@ -1,13 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import subprocess
+import DoE.simulation_data as sd
 import scipy.linalg as alg
 import scipy.sparse as sp
-import sklearn.gaussian_process as gp
 
-
-from GPR import GPR
-from likelihood import maxlogLikelihood
+from GPR.GPR_RBF import GPR_RBF
+from GPR.likelihood import maxlogLikelihood
 
 # parameters
 DOUBLE_C_SIZE = 8
@@ -22,71 +20,12 @@ N_y = m+2
 SIZE = N_x*N_y
 
 # domain definition
-
 nu_values = [0.01, 0.03, 0.06, 0.07]
 I_values = [1, 5, 20, 50]
 t_values = list(range(0, T, 1))
 
 
 A = np.zeros((N_x*N_y, T*len(nu_values)*len(I_values)))
-
-def generate_data(
-        nu_values:list[float],
-        I_values:list[float]
-        )->None:
-    """
-        ```generate_data``` calls the C executable to compute data and store it as binary files
-    """
-    for nu_iter in nu_values:
-            for I_iter in I_values:
-                subprocess.run(["./main", str(nu_iter), str(I_iter), f"./data/data_nu{nu_iter}_I{I_iter}.bin"])
-    return None
-
-
-def get_params_array(nu_values:list[float], I_values:list[float], t_values:list[float],)->np.ndarray:
-    nu_val_len = len(nu_values)
-    I_val_len = len(I_values)
-
-
-    params_array = np.zeros((nu_val_len*I_val_len*T, 3))
-    for i, nu_iter in enumerate(nu_values):
-        for j, I_iter in enumerate(I_values):
-            stride = i*len(I_values)*T+j*T
-            for k, t_iter in enumerate(t_values):
-                params_array[stride+k,:] += [nu_iter, I_iter, t_iter]
-    return params_array
-
-def import_data(
-        A:np.ndarray,
-        nu_values:list[float],
-        I_values:list[float],
-        from_stdout:bool|None=None)->None:
-    """
-        ```import_data``` imports data either on-the-fly from the executable stdout or from binary files
-    """
-
-    # compute data and directly imported but is not stored
-    
-    if from_stdout is None: from_stdout = True
-
-    if from_stdout:
-        for i, nu_iter in enumerate(nu_values):
-            for j, I_iter in enumerate(I_values):
-                output = subprocess.run(["./main", str(nu_iter), str(I_iter)], capture_output=True)
-                stride = i*len(I_values)*T+j*T
-                for t in range(T):
-                    A[:, stride+t: stride+t+1] = np.frombuffer(output.stdout)[t*SIZE: (t+1)*SIZE].reshape(SIZE, 1)
-
-    # import data from binary files
-    else:
-        for i, nu_iter in enumerate(nu_values):
-            for j, I_iter in enumerate(I_values):
-                stride = i*len(I_values)*T+j*T
-                with open(f"data/data_nu{nu_iter}_I{I_iter}.bin", "br") as f:
-                    for t in range(T):
-                        A[:, stride+t: stride+t+1] += np.frombuffer(f.read(SIZE*DOUBLE_C_SIZE)).reshape(SIZE, 1)
-    return None
-
 
 def get_reduced_A(
     A:np.ndarray, 
@@ -111,9 +50,9 @@ def get_reduced_A(
 
 
 def generate_example(
-        gpr:GPR
+        gpr:GPR_RBF
     ):
-    m, s = gpr.predict_new_ak(get_params_array([0.06], [21], t_values), return_cov=True)
+    m, s = gpr.predict(sd.get_params_array([0.06], [21], t_values), return_cov=True)
     pred_coeff_upper95 = m + 2*np.reshape(np.sqrt(np.maximum(np.diag(s), 0)), (len(m),1))
     pred_coeff_lower95 = m - 2*np.reshape(np.sqrt(np.maximum(np.diag(s), 0)), (len(m),1))
     pred = Uk@m.T
@@ -149,16 +88,16 @@ def plot_3D(
 
 
 if __name__ == "__main__":
-    #generate_data(nu_values, I_values)
-    import_data(A, nu_values, I_values, from_stdout=True)
+    #sd.generate_data(nu_values, I_values)
+    sd.import_data(A, nu_values, I_values, from_stdout=True)
     Uk, Sk, Vk = get_reduced_A(A, return_Uk_Sk_Vk=True)
 
     a = A.T@Uk
-    params_array = get_params_array(nu_values, I_values, t_values)
+    params_array = sd.get_params_array(nu_values, I_values, t_values)
     
     sigma = 1e-5
     thetas, _ = maxlogLikelihood(params_array, a, sigma=sigma, verbose=False)
-    gpr = GPR(gp.kernels.RBF(length_scale=thetas), thetas)
+    gpr = GPR_RBF(thetas)
 
     gpr.fit(params_array, a, sigma=sigma)
     print(gpr.score(params_array, a))
