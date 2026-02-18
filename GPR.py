@@ -4,13 +4,14 @@ import scipy.linalg as linalg
 
 
 class GPR:
-    def __init__(self, kernel:gp.kernels.Kernel|None=None):
+    def __init__(self, kernel:gp.kernels.Kernel|None=None, theta:int|np.ndarray=1):
+        self.theta = theta
         if kernel is None:
-            self.kernel = gp.kernels.RBF()
+            self.kernel = gp.kernels.RBF(self.theta)
         else:
             self.kernel = kernel
 
-    def train(
+    def fit(
             self,
             X_obs:np.ndarray,
             y:np.ndarray,
@@ -21,9 +22,12 @@ class GPR:
         # kernel matrix
         self.X_obs = X_obs
         self.K = np.eye(n_rows)*sigma+self.kernel(self.X_obs, self.X_obs)
-        
+        c, low = linalg.cho_factor(self.K)
+
+        print(self.kernel.theta)
+
         # matrix product K^{-1} by y
-        self.invK_y = linalg.solve(self.K, y)
+        self.invK_y = linalg.cho_solve((c, low), y)
 
 
     def predict_new_ak(
@@ -31,6 +35,7 @@ class GPR:
             x:np.ndarray,
             return_cov:bool=False
             )->tuple[np.ndarray, np.ndarray]|np.ndarray:
+        
         mean = self.kernel(x, self.X_obs)@self.invK_y
         if return_cov:
             cov = self.kernel(x, x) - \

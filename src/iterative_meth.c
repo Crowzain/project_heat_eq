@@ -1,5 +1,7 @@
 #include "iterative_meth.h"
 
+// based on the Jonas Koko courses
+
 inline void print_vector(double* u, int m, int n, FILE* f_ptr){
     int size = (m+2)*(n+2);
     fwrite(u, sizeof(double), size, f_ptr?f_ptr:stdout);
