@@ -1,0 +1,18 @@
+artifact_path: /Users/pierrebeauvain/Desktop/Isima/Application_IA/projet/mlruns/1/models/m-cf5a090b2c474171afd2c02d9d1b7f68/artifacts
+flavors:
+  python_function:
+    cloudpickle_version: 3.1.2
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.loaders.code_model
+    model_code_path: /Users/pierrebeauvain/Desktop/Isima/Application_IA/projet/model.py
+    python_version: 3.13.9
+    streamable: false
+mlflow_version: 3.9.0
+model_id: m-cf5a090b2c474171afd2c02d9d1b7f68
+model_size_bytes: 2861
+model_uuid: m-cf5a090b2c474171afd2c02d9d1b7f68
+prompts: null
+utc_time_created: '2026-02-19 16:27:01.873043'
