@@ -29,9 +29,9 @@ $> streamlit run dashboard
 ```
 
 ## 4. Perspectives, ideas
-[ ] Use Kubernetes to unify the dashboard and the API
-[ ] Build Jenkins pipelines for test
-[ ] Use of MPI to parallelize computations during DoE
+- [ ] Use Kubernetes to unify the dashboard and the API
+- [ ] Build Jenkins pipelines for test
+- [ ] Use of MPI to parallelize computations during DoE
 
 ## 5. Authors and acknowledgment
 Pierre B. wrote this project based on lectures by Amina C., Jonas K. and Rodolphe L.
