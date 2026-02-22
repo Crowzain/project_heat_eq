@@ -16,20 +16,15 @@ $> docker build -t my-app:1.0 .
 
 ## 3. Usage
 
-Start the container the following command:
+Start the container composition the following command:
 ```
 $> docker run -p 8000:8000 my-app:1.0
 ```
 
-
 ### 3.1 Dashboard
-Launch the dashboard with the following command:
-```
-$> streamlit run dashboard
-```
+Access the dashboard using this [link](http://localhost:8080).
 
 ## 4. Perspectives, ideas
-- [ ] Use Kubernetes to unify the dashboard and the API
 - [ ] Build Jenkins pipelines for test
 - [ ] Use of MPI to parallelize computations during DoE
 

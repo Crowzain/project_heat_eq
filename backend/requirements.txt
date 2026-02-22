@@ -19,13 +19,11 @@ asyncssh==2.22.0
 atpublic==7.0.0
 attrs==25.4.0
 autograd==1.8.0
-ax-platform==1.2.1
 backoff==2.2.1
 bcrypt==5.0.0
 beautifulsoup4==4.14.3
 billiard==4.2.4
 blinker==1.9.0
-botorch==0.16.1
 build==1.4.0
 cachetools==6.2.6
 celery==5.6.2
@@ -290,6 +288,7 @@ uvloop==0.22.1
 vine==5.1.0
 voluptuous==0.16.0
 wadler_lindig==0.1.7
+watchdog==6.0.0
 watchfiles==1.1.1
 wcwidth==0.2.14
 webencodings==0.5.1

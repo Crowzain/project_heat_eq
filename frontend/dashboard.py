@@ -2,10 +2,13 @@ import streamlit as st
 import numpy as np
 import requests
 import plotly.graph_objects as go
+import os
+
+URL = os.environ['API_URL']
+
+T = 20
 
 st.title('Heat Equation Gaussian Process Interpolation API')
-URL = "http://0.0.0.0:8000/"
-T = 20
 container = st.container()
 container.write(r"""This project aims to interpolate heat simulations according to a set of snapshots. 
                 Snapshots are approximate solutions of the heat equation (PDE) below and computed 
