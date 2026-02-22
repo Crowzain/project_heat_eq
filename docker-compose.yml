@@ -4,6 +4,7 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: my_api
     ports:
       - "8080:8080"
     environment:
@@ -15,6 +16,7 @@ services:
 
   backend:
     build: ./backend
+    container_name: my_dashboard
     ports:
       - "8000:8000"
     networks:
