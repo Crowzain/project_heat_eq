@@ -18,7 +18,7 @@ $> docker build -t my-app:1.0 .
 
 Start the container composition the following command:
 ```
-$> docker run -p 8000:8000 my-app:1.0
+$> docker compose up --build
 ```
 
 ### 3.1 Dashboard

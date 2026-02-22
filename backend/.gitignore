@@ -7,4 +7,3 @@ main
 */obj
 *.ipynb
 *.db
-/models
