@@ -1,6 +1,6 @@
 import subprocess
 import numpy as np
-import os
+import pathlib
 
 # parameters
 DOUBLE_C_SIZE = 8
@@ -13,13 +13,24 @@ N_x = n+2
 N_y = m+2
 SIZE = N_x*N_y
 
-EXE = "main"
-if EXE in os.listdir(path="."):
-    WDIR = "."
-    EXE_PATH = os.path.join(".", EXE)
-elif EXE in os.listdir(path="./DoE"):
-    WDIR = "./DoE"
-    EXE_PATH = os.path.join(WDIR, EXE)
+
+ROOT = pathlib.Path(".")
+EXE_PATH = None
+WDIR = None
+
+# Use next() with generator expressions for efficiency
+exe_path_iterator = pathlib.Path.rglob(ROOT, "*main")
+exe_path = next(exe_path_iterator, None)
+
+if exe_path:
+    EXE_PATH = exe_path
+    WDIR = EXE_PATH.parent
+else:
+    make_path_iterator = pathlib.Path.rglob(ROOT, "*Makefile")
+    make_path = next(make_path_iterator, None)
+    if make_path:
+        WDIR = make_path.parent
+
 
 def generate_data(
         nu_values:list[float],
@@ -75,7 +86,7 @@ def import_data(
         for i, nu_iter in enumerate(nu_values):
             for j, I_iter in enumerate(I_values):
                 stride = i*len(I_values)*T+j*T
-                with open(os.path.join(WDIR, f"./data/data_nu{nu_iter}_I{I_iter}.bin"), "br") as f:
+                with open(WDIR / f"./data/data_nu{nu_iter}_I{I_iter}.bin", "br") as f:
                     for t in range(T):
                         A[:, stride+t: stride+t+1] += np.frombuffer(f.read(SIZE*DOUBLE_C_SIZE)).reshape(SIZE, 1)
     return None
