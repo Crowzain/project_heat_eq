@@ -3,6 +3,21 @@ import numpy as np
 import DoE.simulation_data as sd
 import utility
 from GPR.GPR_RBF import GPR_RBF
+import getopt, sys
+
+args = sys.argv[1:]
+options = "s:"
+long_options = ["from_stdout"]
+
+flag_stdout = False
+
+try:
+    arguments, values = getopt.getopt(args, options, long_options)
+    for currentArg, currentVal in arguments:
+        if currentArg in ("-s", "--from_stdout"):
+            flag_stdout = True
+except getopt.error as err:
+    print(str(err))
 
 with mlflow.start_run() as run:
     # parameters
@@ -27,7 +42,7 @@ with mlflow.start_run() as run:
 
 
     #sd.generate_data(nu_values, I_values)
-    sd.import_data(A, nu_values, I_values, from_stdout=False)
+    sd.import_data(A, nu_values, I_values, from_stdout=flag_stdout)
     Uk, Sk, Vk = utility.get_reduced_A(A, return_Uk_Sk_Vk=True)
 
     a = A.T@Uk

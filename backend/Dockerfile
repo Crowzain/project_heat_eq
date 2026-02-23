@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN python register_model.py
+RUN python register_model.py -s
 
 EXPOSE 8000
 
