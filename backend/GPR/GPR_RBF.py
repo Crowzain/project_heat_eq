@@ -3,17 +3,13 @@ import numpy as np
 import scipy.linalg as linalg
 import mlflow.pyfunc
 from typing import Tuple, Union, Dict
+from .likelihood import maxlogLikelihood
 
 
 class GPR_RBF(mlflow.pyfunc.PythonModel):
-    def __init__(self, theta:Union[np.ndarray, None]=None, sigma:int=0):
-        if theta is None:
-            self.theta = np.ones((1,3))
-        else:
-            self.theta = theta
-        self.kernel = gp.kernels.RBF(self.theta)
+    def __init__(self, thetas:Union[np.ndarray, None]=None, sigma:float=0.0):
+        self.thetas = thetas
         self.sigma = sigma
-
 
     def fit(
             self,
@@ -21,6 +17,11 @@ class GPR_RBF(mlflow.pyfunc.PythonModel):
             y:np.ndarray,
             Uk:np.ndarray
             )->None:
+        
+        if self.thetas is None: 
+            self.thetas, _ = maxlogLikelihood(X_obs, y, sigma=self.sigma, verbose=False)
+        self.kernel = gp.kernels.RBF(self.thetas)
+        
         n_rows = X_obs.shape[0]
         self.Uk = Uk
     
