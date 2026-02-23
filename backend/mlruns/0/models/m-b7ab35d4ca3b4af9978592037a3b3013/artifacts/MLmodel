@@ -1,0 +1,29 @@
+artifact_path: /Users/pierrebeauvain/Desktop/Isima/Application_IA/projet/backend/mlruns/0/models/m-b7ab35d4ca3b4af9978592037a3b3013/artifacts
+flavors:
+  python_function:
+    cloudpickle_version: 3.1.2
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.13.9
+    streamable: false
+is_signature_from_type_hint: false
+mlflow_version: 3.9.0
+model_id: m-b7ab35d4ca3b4af9978592037a3b3013
+model_size_bytes: 934456
+model_uuid: m-b7ab35d4ca3b4af9978592037a3b3013
+prompts: null
+run_id: e8043c7b3e2c47e7a73f21a315e190ba
+saved_input_example_info:
+  artifact_path: input_example.json
+  serving_input_path: serving_input_example.json
+  type: ndarray
+signature:
+  inputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1, 3]}}]'
+  outputs: '[{"type": "any", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-02-23 18:53:39.968620'

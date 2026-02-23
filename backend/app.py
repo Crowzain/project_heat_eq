@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import numpy as np
-import os
-import pickle
+import mlflow.pyfunc
+
+
+model_name = "pyfunc-gaussian-process-reg-model"
+model_version = "latest"
 
 # --- 1 . Load the trained model ---
-with open(os.path.join("models", "model.pkl"), "rb") as f:
-    model = pickle.load(f)
+model_uri = f"models:/{model_name}/{model_version}"
+model = mlflow.pyfunc.load_model(model_uri)
 
 # --- 2. Create FastAPI app --
 app = FastAPI(title="Heat Equation Gaussian Process Interpolation API")
