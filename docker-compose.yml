@@ -4,7 +4,7 @@ services:
     build: ./frontend
     container_name: my_api
     ports:
-      - "8080:8080"
+      - "7080:7080"
     environment:
     - API_URL=http://backend:8000/
     depends_on:
