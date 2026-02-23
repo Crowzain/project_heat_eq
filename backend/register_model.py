@@ -3,9 +3,10 @@ import numpy as np
 import DoE.simulation_data as sd
 import utility
 from GPR.GPR_RBF import GPR_RBF
-import getopt, sys
+import pickle 
+#import getopt, sys
 
-args = sys.argv[1:]
+""" args = sys.argv[1:]
 options = "s:"
 long_options = ["from_stdout"]
 
@@ -17,7 +18,17 @@ try:
         if currentArg in ("-s", "--from_stdout"):
             flag_stdout = True
 except getopt.error as err:
-    print(str(err))
+    print(str(err)) """
+
+WRITE_PICKLE_FLAG = True
+
+if WRITE_PICKLE_FLAG:
+    PICKLE_PATH = os.path.join("models", "model.pkl")
+    with open(PICKLE_PATH, "wb") as file:
+        pickle.dump(loaded_pyfunc_model, file)
+
+with open(os.path.join("models", "model.pkl"), "rb") as f:
+    model = pickle.load(f)
 
 with mlflow.start_run() as run:
     # parameters
@@ -42,7 +53,7 @@ with mlflow.start_run() as run:
 
 
     #sd.generate_data(nu_values, I_values)
-    sd.import_data(A, nu_values, I_values, from_stdout=flag_stdout)
+    sd.import_data(A, nu_values, I_values, from_stdout=True)
     Uk, Sk, Vk = utility.get_reduced_A(A, return_Uk_Sk_Vk=True)
 
     a = A.T@Uk
