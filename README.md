@@ -9,19 +9,13 @@
 
 ## 2. Installation
 
-After cloning the repo, build the image with:
-```
-$> docker build -t my-app:1.0 .
-```
-
-## 3. Usage
-
-Start the container composition the following command:
+After cloning the repo, build the image with the following command:
 ```
 $> docker compose up --build
 ```
 
-### 3.1 Dashboard
+## 3. Usage
+
 Access the dashboard using this [link](http://localhost:8080).
 
 ## 4. Perspectives, ideas
@@ -30,4 +24,4 @@ Access the dashboard using this [link](http://localhost:8080).
 
 ## 5. Authors and acknowledgment
 Pierre B. wrote this project based on lectures by Amina C., Jonas K. and Rodolphe L.
-Special thanks go to Guillaume S., whose YouTube channel and MLOps masterclasses have been a great source of inspiration for this project.
+Special thanks go to Guillaume S. too, whose YouTube channel and MLOps masterclasses have been a great source of inspiration for this project.
