@@ -16,10 +16,10 @@ $> docker compose up --build
 
 ## 3. Usage
 
-Access the dashboard using this [link](http://localhost:8080).
+Access the dashboard using this [link](http://localhost:7080).
 
 ## 4. Perspectives, ideas
-- [ ] Build Jenkins pipelines for test
+- [x] Build Jenkins pipelines for test
 - [ ] Use of MPI to parallelize computations during DoE
 
 ## 5. Authors and acknowledgment

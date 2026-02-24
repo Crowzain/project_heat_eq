@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 7080
 
-CMD [ "streamlit", "run", "dashboard.py", "--server.port", "8080"]
+CMD [ "streamlit", "run", "dashboard.py", "--server.port", "7080"]
