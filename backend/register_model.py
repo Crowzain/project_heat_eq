@@ -4,9 +4,12 @@ import DoE.simulation_data as sd
 import utility
 from GPR.GPR_RBF import GPR_RBF
 import pickle 
-#import getopt, sys
+from pathlib import Path
+import getopt, sys
 
-""" args = sys.argv[1:]
+REGISTER_MODEL = False
+
+args = sys.argv[1:]
 options = "s:"
 long_options = ["from_stdout"]
 
@@ -18,17 +21,21 @@ try:
         if currentArg in ("-s", "--from_stdout"):
             flag_stdout = True
 except getopt.error as err:
-    print(str(err)) """
+    print(str(err)) 
 
 WRITE_PICKLE_FLAG = True
+ROOT = Path(".")
+
+model_name = "pyfunc-gaussian-process-reg-model"
+model_version = "latest"
+
+model_uri = f"models:/{model_name}/{model_version}"
 
 if WRITE_PICKLE_FLAG:
-    PICKLE_PATH = os.path.join("models", "model.pkl")
+    PICKLE_PATH = ROOT / "models" /"model.pkl"
     with open(PICKLE_PATH, "wb") as file:
+        loaded_pyfunc_model = mlflow.pyfunc.load_model(model_uri)
         pickle.dump(loaded_pyfunc_model, file)
-
-with open(os.path.join("models", "model.pkl"), "rb") as f:
-    model = pickle.load(f)
 
 with mlflow.start_run() as run:
     # parameters
@@ -67,10 +74,15 @@ with mlflow.start_run() as run:
 
     mlflow.log_params(params)
     mlflow.log_metrics(gpr.score(params_array, a))
+
+    registered_model_name = None
+    if REGISTER_MODEL:
+        registered_model_name = "pyfunc-gaussian-process-reg-model"
+
     mlflow.pyfunc.log_model(
         python_model=gpr,
         name="pyfunc-model",
         input_example=params_array,
-        registered_model_name="pyfunc-gaussian-process-reg-model"
+        registered_model_name=registered_model_name
     )
     
